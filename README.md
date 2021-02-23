@@ -32,20 +32,30 @@ epods=$(kubectl get pods -n ${namespace} | egrep -i 'Terminated|Evicted' | awk '
 for i in ${epods[@]}; do
   kubectl delete pod --force=true --wait=false --grace-period=0 $i -n ${namespace}
 done
+
 Confirm if there are still pods in this state.
 
 kubectl get pods -n ${namespace} | egrep -i 'Terminated|Evicted'
+
 Deleting all evicted and terminated pods from all namespaces:
 
 kubectl get pods --all-namespaces | egrep -i  'Evicted|Terminated' | awk '{print $2 " --namespace=" $1}' | xargs kubectl delete pod --force=true --wait=false --grace-period=0
+
+
 Delete all containers in ImagePullBackOff state from all namespaces – Bonus:
 
 
 kubectl get pods --all-namespaces | grep 'ImagePullBackOff' | awk '{print $2 " --namespace=" $1}' | xargs kubectl delete pod
+
+
 Delete all containers in ImagePullBackOff or ErrImagePull state from all namespaces – Bonus:
 
 kubectl get pods --all-namespaces | grep -E 'ImagePullBackOff|ErrImagePull|Evicted' | awk '{print $2 " --namespace=" $1}' | xargs kubectl delete pod
+
+
 Using kubectl filters and jq
+
+
 You can also filter kubectl command output and pipe to jq to get specific columns.
 
 First install jq command:
